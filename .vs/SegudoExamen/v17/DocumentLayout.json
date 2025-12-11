@@ -58,8 +58,7 @@
               "RelativeToolTip": "SegudoExamen\\Controllers\\LibrosCotroller.cs",
               "ViewState": "AgIAACMAAAAAAAAAAAAAADMAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-11T02:49:01.785Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-11T02:49:01.785Z"
             },
             {
               "$type": "Document",
@@ -71,8 +70,7 @@
               "RelativeToolTip": "SegudoExamen\\Controllers\\AuthController.cs",
               "ViewState": "AgIAABwAAAAAAAAAAAAAADUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-11T02:48:24.723Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-11T02:48:24.723Z"
             },
             {
               "$type": "Document",
@@ -82,7 +80,7 @@
               "RelativeDocumentMoniker": "SegudoExamen\\Services\\FakeFirebaseService.cs",
               "ToolTip": "C:\\Users\\ororl\\OneDrive\\Documentos\\GitHub\\Examen2\\SegudoExamen\\Services\\FakeFirebaseService.cs",
               "RelativeToolTip": "SegudoExamen\\Services\\FakeFirebaseService.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAQwBEAAAA7AAAAAAAAAA==",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwAQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-11T02:47:39.081Z",
               "EditorCaption": ""
@@ -97,8 +95,7 @@
               "RelativeToolTip": "SegudoExamen\\Controllers\\TestController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-11T02:46:52.43Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-11T02:46:52.43Z"
             },
             {
               "$type": "Document",
@@ -110,8 +107,7 @@
               "RelativeToolTip": "SegudoExamen\\.gitignore",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-12-11T02:35:48.186Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-11T02:35:48.186Z"
             },
             {
               "$type": "Document",
@@ -123,8 +119,7 @@
               "RelativeToolTip": "SegudoExamen\\Models\\Libro.cs",
               "ViewState": "AgIAAA4AAAAAAAAAAAA9wC0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-11T02:30:04.237Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-11T02:30:04.237Z"
             },
             {
               "$type": "Document",
@@ -136,8 +131,7 @@
               "RelativeToolTip": "SegudoExamen\\Models\\Usuario.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-11T02:29:22.522Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-11T02:29:22.522Z"
             },
             {
               "$type": "Document",
@@ -149,8 +143,7 @@
               "RelativeToolTip": "SegudoExamen\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-12-11T02:27:11.811Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-11T02:27:11.811Z"
             },
             {
               "$type": "Document",
@@ -162,8 +155,7 @@
               "RelativeToolTip": "SegudoExamen\\Program.cs",
               "ViewState": "AgIAACgAAAAAAAAAAAAswDMAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-11T02:17:54.615Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-11T02:17:54.615Z"
             }
           ]
         }
