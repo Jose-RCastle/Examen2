@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using SegudoExamen.Models;
+using SegudoExamen.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using SegudoExamen.Models;
-using SegudoExamen.Services;
 
 namespace SegudoExamen.Controllers;
 
@@ -12,12 +12,12 @@ namespace SegudoExamen.Controllers;
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly FakeFirebaseService _fakeService;
+    private readonly DataService _dataService;
     private readonly IConfiguration _config;
 
-    public AuthController(FakeFirebaseService fakeService, IConfiguration config)
+    public AuthController(DataService dataService, IConfiguration config)
     {
-        _fakeService = fakeService;
+        _dataService = dataService;
         _config = config;
     }
 
@@ -26,19 +26,18 @@ public class AuthController : ControllerBase
     {
         try
         {
-            // Validar que todos los campos requeridos estén
+            // Validaciones básicas
             if (string.IsNullOrEmpty(request.Correo) || string.IsNullOrEmpty(request.Contrasena))
-                return BadRequest(new { mensaje = "Correo y contraseña son requeridos" });
+                return BadRequest(new { mensaje = "Correo y contraseña requeridos" });
 
             // Verificar correo único
-            var usuarioExistente = await _fakeService.GetUsuarioByEmail(request.Correo);
-            if (usuarioExistente != null)
+            var existe = await _dataService.GetUsuarioByEmail(request.Correo);
+            if (existe != null)
                 return BadRequest(new { mensaje = "El correo ya está registrado" });
 
             // Crear usuario
             var usuario = new Usuario
             {
-                Id = Guid.NewGuid().ToString(),
                 Nombre = request.Nombre,
                 Apellido = request.Apellido,
                 Correo = request.Correo,
@@ -46,19 +45,15 @@ public class AuthController : ControllerBase
                 Edad = request.Edad,
                 NumeroIdentidad = request.NumeroIdentidad,
                 Telefono = request.Telefono,
-                Rol = "usuario", // Por defecto
-                Activo = true,
-                FechaRegistro = Timestamp.FromDateTime(DateTime.UtcNow),
-                Multas = 0
+                FechaRegistro = Google.Cloud.Firestore.Timestamp.FromDateTime(DateTime.UtcNow)
             };
 
-            await _fakeService.AddUsuario(usuario);
+            await _dataService.AddUsuario(usuario);
 
             return Ok(new
             {
                 mensaje = "Usuario registrado exitosamente",
-                userId = usuario.Id,
-                nombre = $"{usuario.Nombre} {usuario.Apellido}"
+                userId = usuario.Id
             });
         }
         catch (Exception ex)
@@ -72,23 +67,20 @@ public class AuthController : ControllerBase
     {
         try
         {
-            // Buscar usuario por correo
-            var usuario = await _fakeService.GetUsuarioByEmail(request.Correo);
+            var usuario = await _dataService.GetUsuarioByEmail(request.Correo);
 
             if (usuario == null)
                 return Unauthorized(new { mensaje = "Credenciales inválidas" });
 
-            // Verificar cuenta activa
             if (!usuario.Activo)
-                return Unauthorized(new { mensaje = "Cuenta inactiva. Contacte al administrador." });
+                return Unauthorized(new { mensaje = "Cuenta inactiva" });
 
-            // Verificar contraseña
             if (!BCrypt.Net.BCrypt.Verify(request.Contrasena, usuario.Contrasena))
                 return Unauthorized(new { mensaje = "Credenciales inválidas" });
 
             // Generar JWT
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"] ?? "MI_CLAVE_SUPER_SECRETA_DE_32_CARACTERES_LARGOS!12345");
+            var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"] ?? "CLAVE_SECRETA_MUY_LARGA_PARA_JWT_32_CHARS!");
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -128,7 +120,6 @@ public class AuthController : ControllerBase
     }
 }
 
-// DTOs para las requests
 public class RegisterRequest
 {
     public string Nombre { get; set; }

@@ -10,31 +10,29 @@ namespace SegudoExamen.Controllers;
 [Authorize]
 public class LibrosController : ControllerBase
 {
-    private readonly FakeFirebaseService _fakeService;
+    private readonly DataService _dataService;
 
-    public LibrosController(FakeFirebaseService fakeService)
+    public LibrosController(DataService dataService)
     {
-        _fakeService = fakeService;
+        _dataService = dataService;
     }
 
     [HttpPost]
     [Authorize(Roles = "bibliotecario,admin")]
-    public async Task<IActionResult> CrearLibro([FromBody] CrearLibroRequest request)
+    public async Task<IActionResult> CrearLibro([FromBody] LibroRequest request)
     {
         try
         {
-            // Validar ISBN único (simulado)
-            var libros = await _fakeService.GetLibros();
+            // Validar ISBN único (simplificado)
+            var libros = await _dataService.GetLibros();
             if (libros.Any(l => l.ISBN == request.ISBN))
-                return BadRequest(new { mensaje = "El ISBN ya existe en el sistema" });
+                return BadRequest(new { mensaje = "ISBN ya existe" });
 
-            // Validar copias
             if (request.CopiasDisponibles > request.CopiasTotal)
-                return BadRequest(new { mensaje = "Copias disponibles no pueden ser mayores que el total" });
+                return BadRequest(new { mensaje = "Copias disponibles no pueden ser > total" });
 
             var libro = new Libro
             {
-                Id = Guid.NewGuid().ToString(),
                 Titulo = request.Titulo,
                 Autor = request.Autor,
                 ISBN = request.ISBN,
@@ -44,17 +42,18 @@ public class LibrosController : ControllerBase
                 CopiasDisponibles = request.CopiasDisponibles,
                 CopiasTotal = request.CopiasTotal,
                 Ubicacion = request.Ubicacion,
-                Estado = request.CopiasDisponibles > 0 ? "disponible" : "agotado",
                 Descripcion = request.Descripcion,
-                FechaIngreso = Timestamp.FromDateTime(DateTime.UtcNow)
+                Estado = request.CopiasDisponibles > 0 ? "disponible" : "agotado",
+                FechaIngreso = Google.Cloud.Firestore.Timestamp.FromDateTime(DateTime.UtcNow)
             };
 
-            await _fakeService.AddLibro(libro);
+            await _dataService.AddLibro(libro);
 
             return Ok(new
             {
-                mensaje = "Libro creado exitosamente",
-                libroId = libro.Id
+                mensaje = "Libro creado",
+                id = libro.Id,
+                titulo = libro.Titulo
             });
         }
         catch (Exception ex)
@@ -71,9 +70,9 @@ public class LibrosController : ControllerBase
     {
         try
         {
-            var libros = await _fakeService.GetLibros();
+            var libros = await _dataService.GetLibros();
 
-            // Aplicar filtros
+            // Filtros
             if (!string.IsNullOrEmpty(categoria))
                 libros = libros.Where(l => l.Categoria?.Contains(categoria, StringComparison.OrdinalIgnoreCase) == true).ToList();
 
@@ -81,12 +80,9 @@ public class LibrosController : ControllerBase
                 libros = libros.Where(l => l.Autor?.Contains(autor, StringComparison.OrdinalIgnoreCase) == true).ToList();
 
             if (disponible.HasValue)
-            {
-                if (disponible.Value)
-                    libros = libros.Where(l => l.CopiasDisponibles > 0).ToList();
-                else
-                    libros = libros.Where(l => l.CopiasDisponibles == 0).ToList();
-            }
+                libros = disponible.Value
+                    ? libros.Where(l => l.CopiasDisponibles > 0).ToList()
+                    : libros.Where(l => l.CopiasDisponibles == 0).ToList();
 
             return Ok(libros);
         }
@@ -101,11 +97,10 @@ public class LibrosController : ControllerBase
     {
         try
         {
-            var libro = await _fakeService.GetLibroById(id);
-            if (libro == null)
-                return NotFound(new { mensaje = "Libro no encontrado" });
-
-            return Ok(libro);
+            var libro = await _dataService.GetLibroById(id);
+            return libro == null
+                ? NotFound(new { mensaje = "Libro no encontrado" })
+                : Ok(libro);
         }
         catch (Exception ex)
         {
@@ -119,16 +114,16 @@ public class LibrosController : ControllerBase
     {
         try
         {
-            var libro = await _fakeService.GetLibroById(id);
+            var libro = await _dataService.GetLibroById(id);
             if (libro == null)
                 return NotFound(new { mensaje = "Libro no encontrado" });
 
-            // Validación: no reducir copiasTotal si hay préstamos activos
-            if (request.CopiasTotal < libro.CopiasTotal)
+            // Validación de copias
+            if (request.CopiasTotal.HasValue && request.CopiasTotal < libro.CopiasTotal)
             {
                 int prestadas = libro.CopiasTotal - libro.CopiasDisponibles;
                 if (request.CopiasTotal < prestadas)
-                    return BadRequest(new { mensaje = "No se pueden eliminar copias que están prestadas" });
+                    return BadRequest(new { mensaje = "No se pueden eliminar copias prestadas" });
             }
 
             // Actualizar
@@ -141,13 +136,11 @@ public class LibrosController : ControllerBase
             libro.CopiasDisponibles = request.CopiasDisponibles ?? libro.CopiasDisponibles;
             libro.Ubicacion = request.Ubicacion ?? libro.Ubicacion;
             libro.Descripcion = request.Descripcion ?? libro.Descripcion;
-
-            // Actualizar estado basado en disponibilidad
             libro.Estado = libro.CopiasDisponibles > 0 ? "disponible" : "agotado";
 
-            await _fakeService.UpdateLibro(libro);
+            await _dataService.UpdateLibro(libro);
 
-            return Ok(new { mensaje = "Libro actualizado exitosamente" });
+            return Ok(new { mensaje = "Libro actualizado" });
         }
         catch (Exception ex)
         {
@@ -161,23 +154,17 @@ public class LibrosController : ControllerBase
     {
         try
         {
-            var libro = await _fakeService.GetLibroById(id);
+            var libro = await _dataService.GetLibroById(id);
             if (libro == null)
                 return NotFound(new { mensaje = "Libro no encontrado" });
 
-            // Validar que no tenga préstamos activos (simulado)
-            bool tienePrestamosActivos = false; // Simular consulta
-            bool tieneReservasPendientes = false; // Simular consulta
+            // Validaciones (simplificadas)
+            if (libro.CopiasDisponibles < libro.CopiasTotal)
+                return BadRequest(new { mensaje = "No se puede eliminar libro con préstamos activos" });
 
-            if (tienePrestamosActivos)
-                return BadRequest(new { mensaje = "No se puede eliminar un libro con préstamos activos" });
+            await _dataService.DeleteLibro(id);
 
-            if (tieneReservasPendientes)
-                return BadRequest(new { mensaje = "No se puede eliminar un libro con reservas pendientes" });
-
-            await _fakeService.DeleteLibro(id);
-
-            return Ok(new { mensaje = "Libro eliminado exitosamente" });
+            return Ok(new { mensaje = "Libro eliminado" });
         }
         catch (Exception ex)
         {
@@ -186,8 +173,7 @@ public class LibrosController : ControllerBase
     }
 }
 
-// DTOs
-public class CrearLibroRequest
+public class LibroRequest
 {
     public string Titulo { get; set; }
     public string Autor { get; set; }

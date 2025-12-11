@@ -6,7 +6,7 @@ namespace SegudoExamen.Models;
 public class Libro
 {
     [FirestoreDocumentId]
-    public string Id { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
 
     [FirestoreProperty]
     public string Titulo { get; set; }
@@ -25,22 +25,16 @@ public class Libro
 
     [FirestoreProperty]
     public int AnioPublicacion { get; set; }
-
     [FirestoreProperty]
     public int CopiasDisponibles { get; set; }
-
     [FirestoreProperty]
     public int CopiasTotal { get; set; }
-
     [FirestoreProperty]
     public string Ubicacion { get; set; }
-
     [FirestoreProperty]
-    public string Estado { get; set; } = "disponible";
-
+    public string Estado { get; set; } = "disponible"; // "disponible", "agotado", "en mantenimiento"
     [FirestoreProperty]
     public string Descripcion { get; set; }
-
     [FirestoreProperty]
     public Timestamp FechaIngreso { get; set; }
 }
