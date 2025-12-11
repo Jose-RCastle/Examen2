@@ -15,7 +15,7 @@ namespace SegundoExamen.Models
         public string Autor { get; set; } = string.Empty;
 
         [FirestoreProperty]
-        public string ISBN { get; set; } = string.Empty; // Debe ser único
+        public string ISBN { get; set; } = string.Empty;
 
         [FirestoreProperty]
         public string Categoria { get; set; } = string.Empty;
@@ -23,4 +23,25 @@ namespace SegundoExamen.Models
         [FirestoreProperty]
         public string Editorial { get; set; } = string.Empty;
 
-        [FirestoreProperty] public int AnoPublicacion { get; set; } = int.MaxValue;
+        [FirestoreProperty]
+        public int AnoPublicacion { get; set; }
+
+        [FirestoreProperty]
+        public int CopiasDisponibles { get; set; }
+
+        [FirestoreProperty]
+        public int CopiasTotal { get; set; }
+
+        [FirestoreProperty]
+        public string Ubicacion { get; set; } = string.Empty;
+
+        [FirestoreProperty]
+        public string Estado { get; set; } = "activo";
+
+        [FirestoreProperty]
+        public string Descripcion { get; set; } = string.Empty;
+
+        [FirestoreProperty]
+        public DateTime FechaIngreso { get; set; } = DateTime.UtcNow;
+    }
+}
